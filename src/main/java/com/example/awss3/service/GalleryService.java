@@ -9,7 +9,7 @@ import org.springframework.stereotype.Service;
 @RequiredArgsConstructor
 public class GalleryService {
 
-    private GalleryRepository galleryRepository;
+    private final GalleryRepository galleryRepository;
 
     public void savePost(GalleryDto galleryDto) {
         galleryRepository.save(galleryDto.toEntity());
