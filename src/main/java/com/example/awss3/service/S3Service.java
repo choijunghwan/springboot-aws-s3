@@ -15,6 +15,8 @@ import org.springframework.web.multipart.MultipartFile;
 
 import javax.annotation.PostConstruct;
 import java.io.IOException;
+import java.text.SimpleDateFormat;
+import java.util.Date;
 
 @Service
 @NoArgsConstructor
@@ -46,13 +48,21 @@ public class S3Service {
                 .build();
     }
 
-    public String upload(MultipartFile file) throws IOException {
-        String fileName = file.getOriginalFilename();
+    public String upload(String currentFilePath, MultipartFile file) throws IOException {
+        // 고유한 key 값을 갖기위해 현재 시간을 postfix로 붙여줌
+        SimpleDateFormat date = new SimpleDateFormat("yyyymmddHHmmss");
+        String fileName = file.getOriginalFilename() + "-" + date.format(new Date());
 
-        ObjectMetadata objectMetadata = new ObjectMetadata();
-        objectMetadata.setContentLength(file.getSize());
-        objectMetadata.setContentType(file.getContentType());
+        // key가 존재하면 기존 파일은 삭제
+        if ("".equals(currentFilePath) == false && currentFilePath != null) {
+            boolean isExistObject = s3Client.doesObjectExist(bucket, currentFilePath);
 
+            if (isExistObject == true) {
+                s3Client.deleteObject(bucket, currentFilePath);
+            }
+        }
+
+        // 파일 업로드
         s3Client.putObject(new PutObjectRequest(bucket, fileName, file.getInputStream(), null)
                 .withCannedAcl(CannedAccessControlList.PublicRead));
 
