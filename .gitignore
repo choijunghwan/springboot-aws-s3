@@ -5,7 +5,7 @@ build/
 !**/src/main/**/build/
 !**/src/test/**/build/
 
-aws.yml
+
 
 ### STS ###
 .apt_generated
@@ -40,3 +40,4 @@ out/
 
 ### my ignore ##
 src/main/resources/application.yml
+src/main/resources/aws.yml
